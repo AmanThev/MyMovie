@@ -8,9 +8,12 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-<div class="example-wrapper">
-    <h1>Bienvenue sur la page des films! ✅</h1>
-
-
-</div>
+<h1>Mes Films</h1>
+    {% for movie in movies %}
+        <h2>{{ movie.title }}</h2>
+        <p>Année : {{ movie.releaseYear }}</p>
+        <p>Duration : {{ movie.duration }} minutes</p>
+        <p>{{ movie.description}}</p>
+        <a href="{{ path('app_movies_show', {'id' : movie.id}) }}">Lien Film</a>
+    {% endfor %}
 {% endblock %}
