@@ -19,7 +19,7 @@ final class MoviesController extends AbstractController
         ]);
     }
 
-    #[Route('/movies/{id}', name: 'app_movies_show', methods: ['GET'])]
+    #[Route('/movies/{id}', name: 'app_movies_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function show(int $id, MovieRepository $movieRepository): Response
     {
         $movie = $movieRepository->find($id);
@@ -29,5 +29,12 @@ final class MoviesController extends AbstractController
         return $this->render('movies/show.html.twig', [
             'movie' => $movie,
         ]);
+    }
+
+    #[Route('/movies/new', name: 'app_movies_new', methods: ['GET', 'POST'])]
+    public function new()
+    {
+
+        return $this->render('movies/new.html.twig'); 
     }
 }
