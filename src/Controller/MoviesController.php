@@ -9,6 +9,7 @@ use App\Repository\MovieRepository;
 use App\Entity\Movie;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 final class MoviesController extends AbstractController
@@ -45,9 +46,9 @@ final class MoviesController extends AbstractController
             ->add('title', TextType::class)
             ->add('releaseYear', IntegerType::class)
             ->add('duration', IntegerType::class)
-            ->add('description', TextType::class)
+            ->add('description', TextareaType::class)
             ->add('save', SubmitType::class, ['label' => 'Add Movie'])
             ->getForm();
-        return $this->render('movies/new.html.twig', ['form' => $form]); 
+        return $this->render('movies/new.html.twig', ['form' => $form->createView()]); 
     }
 }
