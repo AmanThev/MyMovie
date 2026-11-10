@@ -5,13 +5,11 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\Request;
 use App\Repository\MovieRepository;
 use App\Entity\Movie;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Form\MovieType;
 
 final class MoviesController extends AbstractController
 {
@@ -38,26 +36,46 @@ final class MoviesController extends AbstractController
     }
 
     #[Route('/movies/new', name: 'app_movies_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-
+    public function new(Request $request, EntityManagerInterface $entityManager): Response {
         $movie = new Movie();
-        
-        $form = $this->createFormBuilder($movie)
-            ->add('title', TextType::class)
-            ->add('releaseYear', IntegerType::class)
-            ->add('duration', IntegerType::class)
-            ->add('description', TextareaType::class)
-            ->add('save', SubmitType::class, ['label' => 'Add Movie'])
-            ->getForm();
-        
+
+        $form = $this->createForm(MovieType::class, $movie);
+
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($movie);
             $entityManager->flush();
 
             return $this->redirectToRoute('app_movies');
         }
-        return $this->render('movies/new.html.twig', ['form' => $form->createView()]); 
+
+        return $this->render('movies/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/movie/{id}/edit', name: 'app_movies_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function edit(int $id, MovieRepository $movieRepository, Request $request, EntityManagerInterface $entityManager): Response {
+        $movie = $movieRepository->find($id);
+        if (!$movie) {
+            throw $this->createNotFoundException('Movie not found');
+        }
+
+        $form = $this->createForm(MovieType::class, $movie);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            $this->addFlash('success', 'Movie has been updated');
+            return $this->redirectToRoute('app_movie_show', [
+                'id' => $movie->getId()
+            ]);
+        }
+
+        return $this->render('movies/edit.html.twig', [
+            'movie' => $movie,
+            'form' => $form->createView(),
+        ]);
     }
 }
