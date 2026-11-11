@@ -21,5 +21,53 @@
     </head>
     <body>
         {% block body %}{% endblock %}
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+                <span class="countdown">5</span>s
+            </div>
+        {% endfor %}
+
+
+        <script>
+            function startNotificationCountdown() {
+                const notifications = document.querySelectorAll('.alert-success');
+
+                notifications.forEach(function(notification) {
+
+                    if (notification.dataset.timerStarted === 'true') {
+                        return;
+                    }
+
+                    notification.dataset.timerStarted = 'true';
+
+                    const countdown = notification.querySelector('.countdown');
+
+                    if (!countdown) {
+                        console.log("Compteur introuvable !");
+                        return;
+                    }
+
+                    let seconds = 5;
+
+                    const timer = setInterval(function() {
+                        seconds--;
+                        countdown.textContent = seconds;
+
+                        if (seconds <= 0) {
+                            clearInterval(timer);
+                            notification.remove();
+                        }
+                    }, 1000);
+                });
+            }
+
+            // Exécuté lors des chargements et navigations Turbo
+            document.addEventListener('turbo:load', startNotificationCountdown);
+
+            // Exécuté lors du premier chargement classique
+            document.addEventListener('DOMContentLoaded', startNotificationCountdown);
+            </script>
     </body>
 </html>

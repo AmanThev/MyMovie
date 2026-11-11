@@ -5,41 +5,25 @@
 {% block body %}
 
 <div class="header">
-    <div class="container">
+    <div class="container movies-header">
         <h1>🎬 MyMovies</h1>
+        <a href="{{ path('app_movies_new') }}" class="btn-add">+ Add Movie</a>
     </div>
 </div>
 
 <main class="container">
-
     <h2>Mes films</h2>
-
     <div class="movies-grid">
-
         {% for movie in movies %}
-
             <article class="movie-card">
-
                 <h2>{{ movie.title }}</h2>
+                <p class="movie-info">{{ movie.releaseYear }} · {{ movie.duration }} minutes</p>
 
-                <p class="movie-info">
-                    {{ movie.releaseYear }} · {{ movie.duration }} minutes
-                </p>
-
-                <p>
-                    {{ movie.description }}
-                </p>
-
-                <a href="{{ path('app_movies_show', {id: movie.id}) }}" class="btn">
-                    Voir le film
-                </a>
-
+                <p>{{ movie.description }}</p>
+                <a href="{{ path('app_movies_show', {id: movie.id}) }}" class="btn">Voir le film</a>
             </article>
-
         {% endfor %}
-
     </div>
-
 </main>
 
 {% endblock %}

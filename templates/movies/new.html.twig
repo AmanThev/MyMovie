@@ -1,34 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes films{% endblock %}
+{% block title %}Add Movie{% endblock %}
 
 {% block body %}
 
-<div class="header">
-    <div class="container">
-        <h1>🎬 MyMovies</h1>
-    </div>
-</div>
-
-<main class="container">
-
-    <h1>Add a new movie</h1>
-    {{ form_start(form) }}
-
-        {{ form_row(form.title) }}
-
-        {{ form_row(form.releaseYear) }}
-
-        {{ form_row(form.duration) }}
-
-        {{ form_row(form.description) }}
-
-        <button type="submit" class="btn">
-            Add Movie
-        </button>
-
+<div class="movie-form-container">
+    <h1>Add New Movie</h1>
+    {{ form_start(form, {'attr': {'class': 'movie-form'}}) }}
+        <div class="form-group">
+            {{ form_label(form.title) }}
+            {{ form_widget(form.title) }}
+            {{ form_errors(form.title) }}
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                {{ form_label(form.releaseYear) }}
+                {{ form_widget(form.releaseYear) }}
+                {{ form_errors(form.releaseYear) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.duration) }}
+                {{ form_widget(form.duration) }}
+                {{ form_errors(form.duration) }}
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description) }}
+            {{ form_errors(form.description) }}
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn">+ Add Movie</button>
+            <a href="{{ path('app_movies') }}" class="btn-cancel">Cancel</a>
+        </div>
     {{ form_end(form) }}
-
-</main>
+</div>
 
 {% endblock %}

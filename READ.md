@@ -10,7 +10,7 @@ The project is developped progressively, with new features added as I learn new 
 * PHP
 * Symfony
 * Doctrine ORM
-* MySQL
+* PostgreSQL
 * Twig
 * HTML/CSS
 

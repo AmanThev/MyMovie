@@ -55,7 +55,7 @@ final class MoviesController extends AbstractController
         ]);
     }
 
-    #[Route('/movie/{id}/edit', name: 'app_movies_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/movies/{id}/edit', name: 'app_movies_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(int $id, MovieRepository $movieRepository, Request $request, EntityManagerInterface $entityManager): Response {
         $movie = $movieRepository->find($id);
         if (!$movie) {
@@ -68,7 +68,7 @@ final class MoviesController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
             $this->addFlash('success', 'Movie has been updated');
-            return $this->redirectToRoute('app_movie_show', [
+            return $this->redirectToRoute('app_movies_show', [
                 'id' => $movie->getId()
             ]);
         }
@@ -77,5 +77,26 @@ final class MoviesController extends AbstractController
             'movie' => $movie,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/movies/{id}/delete', name: 'app_movies_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function delete (int $id, MovieRepository $movieRepository, Request $request, EntityManagerInterface $entityManager): Response {
+        $movie = $movieRepository->find($id);
+        if (!$movie) {
+            throw $this->createNotFoundException('Movie not found');
+        }
+
+        if ($this->isCsrfTokenValid(
+            'delete' . $movie->getId(),
+            $request->request->get('_token')
+        )) {
+            $entityManager->remove($movie);
+            $entityManager->flush();
+            $this->addFlash('success', 'Movie has been deleted');
+
+            return $this->redirectToRoute('app_movies');
+        }
+
+        throw $this->createAccessDeniedException('Invalid CSRF token');
     }
 }

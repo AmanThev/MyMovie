@@ -32,9 +32,26 @@
             </p>
         </div>
 
-        <a href="{{ path('app_movies') }}" class="btn">
-            ← Retour aux films
-        </a>
+        <form method="post"
+            action="{{ path('app_tmdb_update', {'id': movie.id}) }}">
+
+            <button type="submit" class="btn btn-tmdb">
+                ↻ Update from TMDB
+            </button>
+        </form>
+
+        <div class="movie-actions">
+            <a href="{{ path('app_movies') }}" class="btn">← Retour aux films</a>
+            <a href="{{ path('app_movies_edit', {'id': movie.id}) }}" class="btn">Edit Movie</a>
+            <form method="post" action="{{ path('app_movies_delete', {'id': movie.id}) }}" class="delete-form">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ movie.id) }}">
+                <button type="submit" class="btn btn-danger">
+                    🗑 Delete Movie
+                </button>
+            </form>
+
+        </div>
+</form>
 
     </article>
 
