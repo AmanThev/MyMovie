@@ -8,6 +8,56 @@
 
     <h1>Edit Movie: {{ movie.title }}</h1>
 
+
+{% if movie.posterPath is empty %}
+
+    <form method="get"
+          action="{{ path('app_movies_edit', {'id': movie.id}) }}"
+          class="tmdb-search">
+
+        <label for="search">Search poster on TMDB</label>
+
+        <div class="tmdb-search-row">
+            <input
+                type="text"
+                id="search"
+                name="search"
+                value="{{ app.request.query.get('search')|default(movie.title) }}"
+                placeholder="Enter a movie title..."
+                required
+            >
+
+            <button type="submit" class="btn-search">
+                Search
+            </button>
+        </div>
+    </form>
+
+    {% if searchResults is not empty %}
+        <div class="tmdb-results">
+            <h3>Select the correct movie</h3>
+            {% for result in searchResults %}
+                <div class="tmdb-result">
+                    {% if result.poster_path %}
+                        <img src="https://image.tmdb.org/t/p/w185{{ result.poster_path }}" alt="Poster of {{ result.title }}">
+                    {% endif %}
+                    <div class="tmdb-result-info">
+                        <h4>{{ result.title }}</h4>
+                        <p>{{ result.release_date|default('Unknown date') }}</p>
+                        <form method="post" action="{{ path('app_movies_poster', {'id': movie.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('poster' ~ movie.id) }}">
+                            <input type="hidden" name="tmdb_id" value="{{ result.id }}">
+                            <button type="submit" class="btn-select">Select Poster</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+{% endif %}
+
+
     {{ form_start(form, {'attr': {'class': 'movie-form'}}) }}
 
         <div class="form-group">

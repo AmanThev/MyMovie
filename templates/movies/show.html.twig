@@ -1,3 +1,4 @@
+
 {% extends 'base.html.twig' %}
 
 {% block title %}{{ movie.title }}{% endblock %}
@@ -6,55 +7,41 @@
 
 <div class="header">
     <div class="container">
-        <a href="{{ path('app_movies') }}">
-            🎬 MyMovies
-        </a>
+        <a href="{{ path('app_movies') }}">🎬 MyMovies</a>
     </div>
 </div>
 
 <main class="container">
-
     <article class="movie-detail">
-
-        <h1>{{ movie.title }}</h1>
-
-        <div class="info">
-
-            <span>📅 {{ movie.releaseYear }}</span>
-
-            <span>⏱️ {{ movie.duration }} min</span>
-
+        <div class="movie-detail-content">
+            {% if movie.posterPath %}
+                <div class="movie-detail-poster">
+                    <img src="https://image.tmdb.org/t/p/w500{{ movie.posterPath }}" alt="Poster of {{ movie.title }}">
+                </div>
+            {% endif %}
+            <div class="movie-detail-info">
+                <h1>{{ movie.title }}</h1>
+                <div class="info">
+                    <span>📅 {{ movie.releaseYear }}</span>
+                    <span>⏱️ {{ movie.duration }} min</span>
+                </div>
+                <div class="description">
+                    <p>{{ movie.description }}</p>
+                </div>
+            </div>
         </div>
-
-        <div class="description">
-            <p>
-                {{ movie.description }}
-            </p>
-        </div>
-
-        <form method="post"
-            action="{{ path('app_tmdb_update', {'id': movie.id}) }}">
-
-            <button type="submit" class="btn btn-tmdb">
-                ↻ Update from TMDB
-            </button>
-        </form>
-
         <div class="movie-actions">
-            <a href="{{ path('app_movies') }}" class="btn">← Retour aux films</a>
+            <a href="{{ path('app_movies') }}" class="btn">← Back to Movies</a>
             <a href="{{ path('app_movies_edit', {'id': movie.id}) }}" class="btn">Edit Movie</a>
             <form method="post" action="{{ path('app_movies_delete', {'id': movie.id}) }}" class="delete-form">
                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ movie.id) }}">
-                <button type="submit" class="btn btn-danger">
-                    🗑 Delete Movie
-                </button>
+                <button type="submit" class="btn btn-danger">🗑 Delete Movie</button>
             </form>
-
+            {% if movie.posterPath is empty %}
+                <a href="{{ path('app_movies_edit', {'id': movie.id}) }}" class="btn btn-tmdb">+ Add Poster</a>
+            {% endif %}
         </div>
-</form>
-
     </article>
-
 </main>
 
 {% endblock %}

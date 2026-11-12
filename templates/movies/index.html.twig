@@ -1,6 +1,7 @@
+
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes films{% endblock %}
+{% block title %}MyMovies{% endblock %}
 
 {% block body %}
 
@@ -12,18 +13,38 @@
 </div>
 
 <main class="container">
-    <h2>Mes films</h2>
+    <div class="library-header">
+        <h2>My Movies</h2>
+        <span class="movie-count">{{ movies|length }} movies</span>
+    </div>
+
     <div class="movies-grid">
         {% for movie in movies %}
             <article class="movie-card">
-                <h2>{{ movie.title }}</h2>
-                <p class="movie-info">{{ movie.releaseYear }} · {{ movie.duration }} minutes</p>
+                <a href="{{ path('app_movies_show', {'id': movie.id}) }}" class="movie-poster-link">
+                    {% if movie.posterPath %}
+                        <img src="https://image.tmdb.org/t/p/w500{{ movie.posterPath }}" alt="Poster of {{ movie.title }}" class="movie-poster" loading="lazy">
+                    {% else %}
+                        <div class="movie-poster-placeholder">
+                            🎬
+                        </div>
+                    {% endif %}
+                </a>
+                <div class="movie-card-content">
+                    <h3>{{ movie.title }}</h3>
+                    <p class="movie-info">
+                        {{ movie.releaseYear }} ·
+                        {{ movie.duration }} min
+                    </p>
+                    <p class="movie-description">{{ movie.description }}</p>
+                    <a href="{{ path('app_movies_show', {'id': movie.id}) }}" class="btn movie-view-btn">View Details</a>
+                </div>
 
-                <p>{{ movie.description }}</p>
-                <a href="{{ path('app_movies_show', {id: movie.id}) }}" class="btn">Voir le film</a>
             </article>
+
+        {% else %}
+            <p>No movies in your library yet.</p>
         {% endfor %}
     </div>
 </main>
-
 {% endblock %}

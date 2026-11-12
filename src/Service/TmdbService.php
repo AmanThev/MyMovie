@@ -15,8 +15,7 @@ class TmdbService
     ) {
     }
 
-
-    public function searchMovie(string $title): array{
+    public function searchMovies(string $title): array{
         $response = $this->httpClient->request(
             'GET',
             'https://api.themoviedb.org/3/search/movie',
@@ -31,23 +30,8 @@ class TmdbService
                 ]
             ]
         );
-
         $data = $response->toArray();
-
-        if (empty($data['results'])) {
-            return [];
-        }
-
-        $movie = $data['results'][0];
-
-        return [
-            'title' => $movie['title'],
-            'description' => $movie['overview'],
-            'release_year' => !empty($movie['release_date'])
-                ? (int) substr($movie['release_date'], 0, 4)
-                : null,
-            'tmdb_id' => $movie['id']
-        ];
+        return $data['results'] ?? [];
     }
 
     public function getMovieDetails(int $id): array{
@@ -64,31 +48,6 @@ class TmdbService
                 ]
             ]
         );
-
         return $response->toArray();
     }
-
-    public function getMovieByTitle(string $title): array{
-        // Rechercher le film
-        $movie = $this->searchMovie($title);
-
-        if (empty($movie)) {
-            return [];
-        }
-
-        // Récupérer les détails avec son identifiant TMDB
-        $details = $this->getMovieDetails($movie['tmdb_id']);
-
-        // Préparer les informations pour MyMovies
-        return [
-            'title' => $details['title'] ?? $movie['title'],
-            'releaseYear' => !empty($details['release_date'])
-                ? (int) substr($details['release_date'], 0, 4)
-                : null,
-            'duration' => $details['runtime'] ?? null,
-            'description' => $details['overview'] ?? '',
-            'posterPath' => $details['poster_path'] ?? null
-        ];
-    }
-    
 }
