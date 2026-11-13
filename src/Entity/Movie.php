@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\MovieRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 class Movie
@@ -15,12 +16,33 @@ class Movie
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(
+        message: 'The movie title is required'
+    )]
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: 'The title must contain at least 2 characters',
+        maxMessage: 'The title cannot exceed 255 characters'
+    )]
     private ?string $title = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: 'This field is required.')]
+    #[Assert\Range(
+        min: 1900,
+        maxPropertyPath: 'currentYear',
+        notInRangeMessage: 'The release year must be between {{ min }} and {{ max }}.'
+    )]
     private ?int $releaseYear = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: 'This field is required.')]
+    #[Assert\Range(
+        min: 30,
+        max: 600,
+        notInRangeMessage: 'The duration must be between {{ min }} and {{ max }} minutes.'
+    )]
     private ?int $duration = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -49,6 +71,11 @@ class Movie
     public function getReleaseYear(): ?int
     {
         return $this->releaseYear;
+    }
+
+    public function getCurrentYear(): int
+    {
+        return (int) date('Y');
     }
 
     public function setReleaseYear(int $releaseYear): static
